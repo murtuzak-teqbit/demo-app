@@ -8,7 +8,7 @@ WORKDIR /app
 COPY . .
 
 # Build the application using the Maven Wrapper
-RUN chmod +x mvnw && ./mvnw -N io.takari:maven:wrapper
+RUN mvn -N io.takari:maven:wrapper
 
 # Run the application using the Maven Wrapper
 CMD ["./mvnw", "spring-boot:run"]
