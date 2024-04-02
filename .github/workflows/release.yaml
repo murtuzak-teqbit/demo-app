@@ -1,66 +1,53 @@
-name: CI
+name: Build and Deploy
 
 on:
   push:
-    branches: [ "main" ]
-    tags: [ 'v*.*.*' ]
-
-env:
-  REGISTRY: docker.io
-  USERNAME: USERNAME
-  IMAGE_NAME: APP_NAME
+    branches:
+      - main
 
 jobs:
-  build:
-
+  build_and_deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - name: Checkout Repository
+        uses: actions/checkout@v2
 
-      - name: Setup Docker buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Log into registry ${{ env.REGISTRY }}
+      - name: Login to Docker Hub
         uses: docker/login-action@v2
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ env.USERNAME }}
-          password: ${{ secrets.REGISTRY_SECRET }}
+        # with:
+        #   username: ${{ secrets.DOCKER_USERNAME }}
+        #   password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Extract Docker metadata
-        id: meta
-        uses: docker/metadata-action@v4
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: |
-            # minimal (short sha)
-            type=sha,format=long
+      - name: Build Docker Image
+        run: |
+          docker build -t murtuzakteqbit/sample-demo-app:${{ github.sha }} .
+          docker push murtuzakteqbit/sample-demo-app:${{ github.sha }}
 
-      - name: Build and push Docker image
-        id: build-and-push
-        uses: docker/build-push-action@v3
-        with:
-          context: .
-          platforms: linux/amd64
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          
-      - name: cleanup
-        uses: AutoModality/action-clean@v1
+      - name: Install Helm
+        uses: azure/setup-helm@v1
 
-      - name: Checkout helm3 repository
-        uses: actions/checkout@v3
+      - name: Add Helm Repository
+        run: helm repo add your-helm-repo-name your-helm-repo-url
+
+      - name: Checkout Helm Chart Repository
+        uses: actions/checkout@v2
         with:
           repository: https://github.com/murtuzak-teqbit/demo-app-helm
-          ref: 'main'
-          #token: ${{ secrets.GH_PAT }}
-          
-      - name: Update Helm Chart Values
-        uses: Nextdoor/helm-set-image-tag-action@6aec6e62a1629ac5a3179b5b46ae0a55ce18e5a6
-        with:
-          values_files: UPDATE_PATH_TO_VALUES_FILE
-          tag_value: sha-${{ github.sha }}
-          commit_branch: 'main'
-          helm_docs: false
+          ref: main # Specify the branch where the Helm chart is stored
+
+      - name: Update Helm Chart Image Tag
+        run: |
+          sed -i "s/tag: \"v2\"/tag: \"v2-${GITHUB_SHA:0:7}\"/" charts/demo-app-helm/values.yaml # Replace path/to/values.yaml with the actual path
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'actions@github.com'
+          git add .
+          git commit -m "Update image tag to include GitHub SHA"
+          git push origin main # Replace <branch-name> with the branch where you want to push changes
+
+
