@@ -36,12 +36,18 @@ jobs:
         env:
           GITHUB_SHA: ${{ github.sha }}
 
-      - name: Commit and Push Changes
+      - name: Commit Changes
         run: |
           git config --global user.name 'murtuzak-teqbit'
           git config --global user.email 'murtuzak@teqbit.com'
           git add .
           git commit -m "Update image tag to include GitHub SHA"
           git push origin main # Replace <branch-name> with the branch where you want to push changes
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GH_TOKEN }}
+          branch: main
 
 
