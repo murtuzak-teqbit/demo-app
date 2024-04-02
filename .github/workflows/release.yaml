@@ -38,8 +38,8 @@ jobs:
 
       - name: Commit and Push Changes
         run: |
-          git config --global user.name 'GitHub Actions'
-          git config --global user.email 'actions@github.com'
+          git config --global user.name 'murtuzak-teqbit'
+          git config --global user.email 'murtuzak@teqbit.com'
           git add .
           git commit -m "Update image tag to include GitHub SHA"
           git push origin main # Replace <branch-name> with the branch where you want to push changes
