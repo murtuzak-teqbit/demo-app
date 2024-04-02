@@ -32,6 +32,7 @@ jobs:
 
       - name: Update Helm Chart Image Tag
         run: |
+          git pull origin main
           sed -i "s/tag: \"v2\"/tag: \"v2-${GITHUB_SHA:0:7}\"/" charts/demo-app-helm/values.yaml # Replace path/to/values.yaml with the actual path
         env:
           GITHUB_SHA: ${{ github.sha }}
@@ -48,5 +49,6 @@ jobs:
         with:
           github_token: ${{ secrets.GH_TOKEN }}
           branch: main
+          #force: true
 
 
