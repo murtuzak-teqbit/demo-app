@@ -35,33 +35,6 @@ jobs:
         uses: Nextdoor/helm-set-image-tag-action@main
         with:
           values_files: charts/demo-app-helm/values.yaml
-          tag_value: sha-${{ github.sha }}
+          tag_value: ${{ github.sha }}
           commit_branch: 'main'
-      # - name: Checkout Helm Chart Repository
-      #   uses: actions/checkout@v2
-      #   with:
-      #     repository: murtuzak-teqbit/demo-app-helm
-      #     ref: main # Specify the branch where the Helm chart is stored
-
-      # - name: Update Helm Chart Image Tag
-      #   run: |
-      #     git pull origin main
-      #     sed -i "s/tag: \"v2\"/tag: \"v2-${GITHUB_SHA:0:7}\"/" charts/demo-app-helm/values.yaml # Replace path/to/values.yaml with the actual path
-      #     cat charts/demo-app-helm/values.yaml
-      #   env:
-      #     GITHUB_SHA: ${{ github.sha }}
-
-      # - name: Commit Changes
-      #   run: |
-      #     git config --global user.name 'murtuzak-teqbit'
-      #     git config --global user.email 'murtuzak@teqbit.com'
-      #     git add .
-      #     git commit -m "Update image tag to include GitHub SHA"
-
-      # - name: Push changes
-      #   uses: ad-m/github-push-action@master
-      #   with:
-      #     github_token: ${{ secrets.GH_TOKEN }}
-      #     repository: murtuzak-teqbit/demo-app-helm
-      #     branch: main
-      #     force: true
+      
