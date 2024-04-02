@@ -24,12 +24,6 @@ jobs:
           docker build -t murtuzakteqbit/sample-demo-app:${{ github.sha }} .
           docker push murtuzakteqbit/sample-demo-app:${{ github.sha }}
 
-      - name: Install Helm
-        uses: azure/setup-helm@v1
-
-      - name: Add Helm Repository
-        run: helm repo add your-helm-repo-name your-helm-repo-url
-
       - name: Checkout Helm Chart Repository
         uses: actions/checkout@v2
         with:
