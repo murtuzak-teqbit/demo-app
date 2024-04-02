@@ -32,7 +32,7 @@ jobs:
           token: ${{ secrets.GH_TOKEN }}
           
       - name: Update Helm Chart Values
-        uses: Nextdoor/helm-set-image-tag-action@6aec6e62a1629ac5a3179b5b46ae0a55ce18e5a6
+        uses: Nextdoor/helm-set-image-tag-action@main
         with:
           values_files: charts/demo-app-helm/values.yaml
           tag_value: sha-${{ github.sha }}
