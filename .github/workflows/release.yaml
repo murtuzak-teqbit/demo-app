@@ -27,7 +27,7 @@ jobs:
       - name: Checkout Helm Chart Repository
         uses: actions/checkout@v2
         with:
-          repository: https://github.com/murtuzak-teqbit/demo-app-helm
+          repository: murtuzak-teqbit/demo-app-helm
           ref: main # Specify the branch where the Helm chart is stored
 
       - name: Update Helm Chart Image Tag
