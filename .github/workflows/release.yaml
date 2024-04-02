@@ -24,27 +24,39 @@ jobs:
           docker build -t murtuzakteqbit/sample-demo-app:${{ github.sha }} .
           docker push murtuzakteqbit/sample-demo-app:${{ github.sha }}
 
-      - name: Checkout Helm Chart Repository
-        uses: actions/checkout@v2
+      - name: Checkout helm3 repository
+        uses: actions/checkout@v3
         with:
           repository: murtuzak-teqbit/demo-app-helm
-          ref: main # Specify the branch where the Helm chart is stored
+          ref: 'main'
+          token: ${{ secrets.GH_TOKEN }}
+          
+      - name: Update Helm Chart Values
+        uses: Nextdoor/helm-set-image-tag-action@6aec6e62a1629ac5a3179b5b46ae0a55ce18e5a6
+        with:
+          values_files: charts/demo-app-helm/values.yaml
+          tag_value: sha-${{ github.sha }}
+          commit_branch: 'main'
+      # - name: Checkout Helm Chart Repository
+      #   uses: actions/checkout@v2
+      #   with:
+      #     repository: murtuzak-teqbit/demo-app-helm
+      #     ref: main # Specify the branch where the Helm chart is stored
 
-      - name: Update Helm Chart Image Tag
-        run: |
-          git pull origin main
-          sed -i "s/tag: \"v2\"/tag: \"v2-${GITHUB_SHA:0:7}\"/" charts/demo-app-helm/values.yaml # Replace path/to/values.yaml with the actual path
-          cat charts/demo-app-helm/values.yaml
-        env:
-          GITHUB_SHA: ${{ github.sha }}
+      # - name: Update Helm Chart Image Tag
+      #   run: |
+      #     git pull origin main
+      #     sed -i "s/tag: \"v2\"/tag: \"v2-${GITHUB_SHA:0:7}\"/" charts/demo-app-helm/values.yaml # Replace path/to/values.yaml with the actual path
+      #     cat charts/demo-app-helm/values.yaml
+      #   env:
+      #     GITHUB_SHA: ${{ github.sha }}
 
-      - name: Commit Changes
-        run: |
-          git config --global user.name 'murtuzak-teqbit'
-          git config --global user.email 'murtuzak@teqbit.com'
-          git add .
-          git commit -m "Update image tag to include GitHub SHA"
-          git push -f origin main
+      # - name: Commit Changes
+      #   run: |
+      #     git config --global user.name 'murtuzak-teqbit'
+      #     git config --global user.email 'murtuzak@teqbit.com'
+      #     git add .
+      #     git commit -m "Update image tag to include GitHub SHA"
 
       # - name: Push changes
       #   uses: ad-m/github-push-action@master
@@ -53,5 +65,3 @@ jobs:
       #     repository: murtuzak-teqbit/demo-app-helm
       #     branch: main
       #     force: true
-
-
