@@ -10,6 +10,9 @@ COPY . .
 # Build the application using the Maven Wrapper
 RUN mvn package
 
+# Expose port 8080
+EXPOSE 8080
+
 # Run the application using the Maven Wrapper
 CMD ["java", "-jar", "target/spring-boot-0.0.1-SNAPSHOT.jar"]
 
