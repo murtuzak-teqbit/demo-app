@@ -8,7 +8,8 @@ WORKDIR /app
 COPY . .
 
 # Build the application using the Maven Wrapper
-RUN mvn -N io.takari:maven:wrapper
+RUN mvn package
 
 # Run the application using the Maven Wrapper
-CMD ["./mvnw", "spring-boot:run"]
+CMD ["java", "-jar", "target/spring-boot-0.0.1-SNAPSHOT.jar"]
+
