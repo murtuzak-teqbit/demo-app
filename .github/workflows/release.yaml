@@ -36,7 +36,7 @@ jobs:
       - name: Update Helm Chart Values
         uses: Nextdoor/helm-set-image-tag-action@main
         with:
-          values_files: charts/demo-app-helm/values.yaml
+          values_files: charts/demo-app-helm/dev.yaml
           tag_value: dev-${{ github.sha }}
           commit_branch: dev
 
@@ -69,6 +69,6 @@ jobs:
       - name: Update Helm Chart Values
         uses: Nextdoor/helm-set-image-tag-action@main
         with:
-          values_files: charts/demo-app-helm/values.yaml
+          values_files: charts/demo-app-helm/staging.yaml
           tag_value: main-${{ github.sha }}
           commit_branch: main
