@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - dev
 
 jobs:
   build_and_deploy:
@@ -21,20 +22,20 @@ jobs:
 
       - name: Build Docker Image
         run: |
-          docker build -t murtuzakteqbit/sample-demo-app:${{ github.sha }} .
-          docker push murtuzakteqbit/sample-demo-app:${{ github.sha }}
+          docker build -t murtuzakteqbit/sample-demo-app:${{ github.head_ref }}-${{ github.sha }} .
+          docker push murtuzakteqbit/sample-demo-app:${{ github.head_ref }}-${{ github.sha }}
 
       - name: Checkout helm3 repository
         uses: actions/checkout@v3
         with:
           repository: murtuzak-teqbit/demo-app-helm
-          ref: 'main'
+          ref: ${{ github.head_ref }}
           token: ${{ secrets.GH_TOKEN }}
           
       - name: Update Helm Chart Values
         uses: Nextdoor/helm-set-image-tag-action@main
         with:
           values_files: charts/demo-app-helm/values.yaml
-          tag_value: ${{ github.sha }}
-          commit_branch: 'main'
+          tag_value: ${{ github.head_ref }}-${{ github.sha }}
+          commit_branch: ${{ github.head_ref }}
       
